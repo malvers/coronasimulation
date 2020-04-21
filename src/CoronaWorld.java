@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class CoronaWorld extends JPanel implements IRunner {
 
     private ArrayList<Individual> individuals = new ArrayList();
-    private Rectangle2D.Double indiRect = new Rectangle2D.Double();
 
     public ArrayList<Distribution> getDistributions() {
         return distributions;
@@ -25,11 +24,9 @@ public class CoronaWorld extends JPanel implements IRunner {
     private int generation = 0;
     private long delay = 0;
     private boolean active = false;
-
     private double worldSize = 160;
-    private double deltaMove = worldSize * 0.3;;
-    private double delta_2 = deltaMove / 2;
-
+    private double delta = worldSize * 0.3;
+    private double delta_2 = delta / 2.0;
     private double infectionPropability = 1.0;
     private int maxInfected = 0;
 
@@ -51,7 +48,7 @@ public class CoronaWorld extends JPanel implements IRunner {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     oneInfectionStep();
                 } else if (e.getKeyCode() == KeyEvent.VK_A) {
-                    coronaPlayGround.statistics();
+                    coronaPlayGround.statistics("00:00:00");
                 } else if (e.getKeyCode() == KeyEvent.VK_I) {
                     initIndividuals();
                 } else if (e.getKeyCode() == KeyEvent.VK_S) {
@@ -106,7 +103,7 @@ public class CoronaWorld extends JPanel implements IRunner {
         }
         running = l;
         thread = new Thread(this);
-//        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
         repaint();
     }
@@ -126,7 +123,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     @Override
     public void paint(Graphics g) {
 
-//        super.paint(g);
+        super.paint(g);
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -139,7 +136,8 @@ public class CoronaWorld extends JPanel implements IRunner {
 
         for (Individual ind : individuals) {
 
-            indiRect.setRect(ind.box.x - 3, ind.box.y - 3, ind.box.width, ind.box.height);
+            Rectangle2D.Double is;
+            is = new Rectangle.Double(ind.box.x - 3, ind.box.y - 3, ind.box.width, ind.box.height);
             if (ind.isInfected()) {
                 g2d.setColor(Color.RED);
             } else if (ind.isImmune()) {
@@ -147,7 +145,7 @@ public class CoronaWorld extends JPanel implements IRunner {
             } else {
                 g2d.setColor(Color.PINK);
             }
-            g2d.fill(indiRect);
+            g2d.fill(is);
         }
     }
 
@@ -339,8 +337,8 @@ public class CoronaWorld extends JPanel implements IRunner {
         generation++;
         for (Individual ind : individuals) {
 
-            double dx = Math.random() * deltaMove - delta_2;
-            double dy = Math.random() * deltaMove - delta_2;
+            double dx = Math.random() * delta - delta_2;
+            double dy = Math.random() * delta - delta_2;
 
             ind.box.x += dx;
             ind.box.y += dy;
@@ -379,13 +377,16 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     private void infect(Individual ind1, Individual ind2) {
 
-        if (ind2.isImmune() || !ind1.isInfected()) {
+        if (ind2.isImmune()) {
             return;
         }
-        if (!(Math.random() < infectionPropability)) {
+        if (!ind1.isInfected()) {
             return;
         }
         if (!ind1.box.contains(ind2.box.x, ind2.box.y)) {
+            return;
+        }
+        if (!(Math.random() < infectionPropability)) {
             return;
         }
         ind2.incInfectedTime();

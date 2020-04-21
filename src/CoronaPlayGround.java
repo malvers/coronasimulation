@@ -8,7 +8,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 public class CoronaPlayGround extends JPanel {
 
@@ -17,10 +16,11 @@ public class CoronaPlayGround extends JPanel {
     private static double infectionProbability = 0.1;
     private ArrayList<CoronaWorld> coronaWorlds = new ArrayList<>();
     private int doneCounter = 0;
-    private long startTime = 0;
+    private long startTime;
 
     public CoronaPlayGround() {
 
+        MTools.println("[" + getClass() + "]->ip: " + infectionProbability);
 //        addComponentListener(new ComponentAdapter() {
 //            @Override
 //            public void componentResized(ComponentEvent e) {
@@ -37,21 +37,21 @@ public class CoronaPlayGround extends JPanel {
         for (int i = 0; i < numberCoronaWorlds; i++) {
             coronaWorlds.add(new CoronaWorld(this, infectionProbability));
         }
-        setLayout(new GridLayout());
-        JPanel coronaWordlsPanel = new JPanel();
-        coronaWordlsPanel.setLayout(new GridLayout(5, 1, 1, 1));
+        setLayout(new GridLayout(1, 2));
+        JPanel simu = new JPanel();
+        simu.setLayout(new GridLayout(20, 1, 0, 0));
         for (CoronaWorld cw : coronaWorlds) {
-            coronaWordlsPanel.add(cw);
+            simu.add(cw);
         }
         grapher = new Grapher();
-        grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numberCoronaWorlds);
+        grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numberCoronaWorlds, "00:00:00");
 
 //        MTabbedPane tabbedPane = new MTabbedPane(simu, grapher);
 //        add(tabbedPane);
         removeAll();
         JSplitPane split = new JSplitPane();
-        split.setDividerLocation(600);
-        split.setLeftComponent(coronaWordlsPanel);
+        split.setDividerLocation(500);
+        split.setLeftComponent(simu);
         split.setRightComponent(grapher);
         add(split);
     }
@@ -79,9 +79,7 @@ public class CoronaPlayGround extends JPanel {
 
         doneCounter++;
         if (doneCounter >= numberCoronaWorlds) {
-            statistics();
-            String str = getTimeString();
-            MTools.println( str);
+            statistics(getTimeString());
         }
     }
 
@@ -96,14 +94,21 @@ public class CoronaPlayGround extends JPanel {
         // https://stackoverflow.com/questions/1755199/calendar-returns-wrong-month
         int mMonth = calendar.get(Calendar.MONTH) + 1; // ONLY month count from 0
 
-        int mHour = calendar.get(Calendar.HOUR);
+        int mHour = calendar.get(Calendar.HOUR) - 1;
         int mMin = calendar.get(Calendar.MINUTE);
         int mSec = calendar.get(Calendar.SECOND);
 
-        return "duration [hour:min:sec] - "  + mHour + ":" + mMin + ":" + mSec;
+        String sh = "" + mHour;
+        if( mHour < 10 ) sh = "0" + sh;
+        String sm= "" + mMin;
+        if( mMin < 10 ) sm = "0" + sm;
+        String ss = "" + mSec;
+        if( mSec < 10 ) ss = "0" + ss;
+
+        return "duration [hour:min:sec] - " + sh + ":" + sm + ":" + ss;
     }
 
-    public void statistics() {
+    public void statistics(String timeString) {
 
         MTools.println("[" + getClass() + "]->statistics: ");
         int maxGeneration = 0;
@@ -139,7 +144,8 @@ public class CoronaPlayGround extends JPanel {
                 maxInfected,
                 minInfected,
                 infectionProbability,
-                numberCoronaWorlds);
+                numberCoronaWorlds,
+                timeString);
         grapher.saveImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu.png");
 //        grapher.createHistogramImage(infectionProbability + "_corona_simu_histogram.png");
         repaint();
@@ -148,18 +154,18 @@ public class CoronaPlayGround extends JPanel {
     /// main for testing
     public static void main(String[] args) {
 
-        numberCoronaWorlds = 10;
-        infectionProbability = 0.1;
+        numberCoronaWorlds = 200;
+        infectionProbability = 0.07;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
         f.add(cpg);
         f.setVisible(true);
         Dimension sz = Toolkit.getDefaultToolkit().getScreenSize();
-        f.setBounds(0, 0, 1200, sz.height);
+        f.setBounds(0, 0, sz.width, sz.height);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        MUtilityTools.pauseMillis(2000);
+        MUtilityTools.pauseMillis(5000);
         cpg.startStopAll();
     }
 }

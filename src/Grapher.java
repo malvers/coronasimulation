@@ -17,6 +17,8 @@ public class Grapher extends JPanel {
     private int maxInfected;
     private double infectionProbability;
     private double numberCoronaWorlds;
+    private String timeString
+            ;
 
     public void add(ArrayList<Distribution> d) {
 
@@ -122,6 +124,10 @@ public class Grapher extends JPanel {
         text = "generations until through - max: " + (int) maxGeneration + " min: " + minGeneration;
         g2d.drawString(text, xpos, ypos);
 
+        ypos += 2 * inc;
+        text = "runtime: " + timeString;
+        g2d.drawString(text, xpos, ypos);
+
         for (int j = 0; j < allDistributions.size(); j++) {
 
             ArrayList curve = allDistributions.get(j);
@@ -143,7 +149,7 @@ public class Grapher extends JPanel {
         }
     }
 
-    public void setGlobalStatistics(int maxg, int ming, int maxi, int mini, double ip, double num) {
+    public void setGlobalStatistics(int maxg, int ming, int maxi, int mini, double ip, double num, String ts) {
 
         numberCoronaWorlds = num;
         infectionProbability = ip;
@@ -151,6 +157,7 @@ public class Grapher extends JPanel {
         minGeneration = ming;
         minInfected = mini;
         maxInfected = maxi;
+        timeString = ts;
     }
 
     public void saveImage(String name) {
