@@ -1,4 +1,5 @@
 import mratools.MFrame.MFrame;
+import mratools.MTabbedPane.MTabbedPane;
 import mratools.MTools;
 import mratools.MUtilityTools;
 
@@ -46,14 +47,14 @@ public class CoronaPlayGround extends JPanel {
         grapher = new Grapher();
         grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numberCoronaWorlds, "00:00:00");
 
-//        MTabbedPane tabbedPane = new MTabbedPane(simu, grapher);
-//        add(tabbedPane);
-        removeAll();
-        JSplitPane split = new JSplitPane();
-        split.setDividerLocation(500);
-        split.setLeftComponent(simu);
-        split.setRightComponent(grapher);
-        add(split);
+        MTabbedPane tabbedPane = new MTabbedPane(simu, grapher);
+        add(tabbedPane);
+//        removeAll();
+//        JSplitPane split = new JSplitPane();
+//        split.setDividerLocation(500);
+//        split.setLeftComponent(simu);
+//        split.setRightComponent(grapher);
+//        add(split);
     }
 
     void deactivateAll() {
@@ -154,8 +155,8 @@ public class CoronaPlayGround extends JPanel {
     /// main for testing
     public static void main(String[] args) {
 
-        numberCoronaWorlds = 4000;
-        infectionProbability = 0.1;
+        numberCoronaWorlds = 2000;
+        infectionProbability = 0.07;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
