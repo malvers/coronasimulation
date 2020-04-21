@@ -147,15 +147,15 @@ public class CoronaPlayGround extends JPanel {
                 numberCoronaWorlds,
                 timeString);
         grapher.saveImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu.png");
-//        grapher.createHistogramImage(infectionProbability + "_corona_simu_histogram.png");
+        grapher.createHistogramImage(infectionProbability + "_corona_simu_histogram.png");
         repaint();
     }
 
     /// main for testing
     public static void main(String[] args) {
 
-        numberCoronaWorlds = 200;
-        infectionProbability = 0.07;
+        numberCoronaWorlds = 4000;
+        infectionProbability = 0.1;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
@@ -165,7 +165,8 @@ public class CoronaPlayGround extends JPanel {
         f.setBounds(0, 0, sz.width, sz.height);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        MUtilityTools.pauseMillis(5000);
+        /// wait 10 seconds to start
+        MUtilityTools.pauseMillis(10000);
         cpg.startStopAll();
     }
 }
