@@ -1,0 +1,7 @@
+[class mratools.MFrame.MFrame]->setLayout(LayoutManager manager) not implemented
+[class CoronaPlayGround]->statistics: 
+[class CoronaPlayGround]->maxGeneration: 3187
+[class CoronaPlayGround]->minGeneration: 1890
+[class CoronaPlayGround]->maxInfected:   425
+[class CoronaPlayGround]->minInfected:   336
+duration [hour:min:sec] - 1:1:34
