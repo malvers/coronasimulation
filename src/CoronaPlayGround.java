@@ -4,8 +4,6 @@ import mratools.MUtilityTools;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -18,7 +16,30 @@ public class CoronaPlayGround extends JPanel {
     private int doneCounter = 0;
     private long startTime;
 
+    private final static int randomLimit = 100000;
+    private final static double[] randomList = new double[randomLimit];
+    private static int randomCounter = 0;
+
+    private void initRandom() {
+        for (int i = 0; i < randomList.length; i++) {
+            randomList[i] = Math.random();
+        }
+    }
+
+    static double getNextRandom() {
+        randomCounter++;
+        if (randomCounter >= randomLimit) {
+            randomCounter = 0;
+        }
+        if (randomCounter >= randomLimit) {
+            MTools.println("randomCounter: " + randomCounter + " rl: " + randomLimit);
+        }
+        return randomList[randomCounter];
+    }
+
     public CoronaPlayGround() {
+
+        initRandom();
 
         MTools.println("[" + getClass() + "]->ip: " + infectionProbability);
 //        addComponentListener(new ComponentAdapter() {
@@ -99,11 +120,17 @@ public class CoronaPlayGround extends JPanel {
         int mSec = calendar.get(Calendar.SECOND);
 
         String sh = "" + mHour;
-        if( mHour < 10 ) sh = "0" + sh;
-        String sm= "" + mMin;
-        if( mMin < 10 ) sm = "0" + sm;
+        if (mHour < 10) {
+            sh = "0" + sh;
+        }
+        String sm = "" + mMin;
+        if (mMin < 10) {
+            sm = "0" + sm;
+        }
         String ss = "" + mSec;
-        if( mSec < 10 ) ss = "0" + ss;
+        if (mSec < 10) {
+            ss = "0" + ss;
+        }
 
         return "duration [hour:min:sec] - " + sh + ":" + sm + ":" + ss;
     }
@@ -155,7 +182,7 @@ public class CoronaPlayGround extends JPanel {
     public static void main(String[] args) {
 
         numberCoronaWorlds = 4000;
-        infectionProbability = 0.5;
+        infectionProbability = 0.06;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();

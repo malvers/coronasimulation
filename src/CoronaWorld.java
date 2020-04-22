@@ -337,8 +337,11 @@ public class CoronaWorld extends JPanel implements IRunner {
         generation++;
         for (Individual ind : individuals) {
 
-            double dx = Math.random() * delta - delta_2;
-            double dy = Math.random() * delta - delta_2;
+//            double dx = Math.random() * delta - delta_2;
+//            double dy = Math.random() * delta - delta_2;
+
+            double dx = CoronaPlayGround.getNextRandom() * delta - delta_2;
+            double dy = CoronaPlayGround.getNextRandom() * delta - delta_2;
 
             ind.box.x += dx;
             ind.box.y += dy;

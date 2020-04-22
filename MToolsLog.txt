@@ -1,13 +1,13 @@
-[class CoronaPlayGround]->ip: 0.5
+[class CoronaPlayGround]->ip: 0.06
 [class mratools.MFrame.MFrame]->setLayout(LayoutManager manager) not implemented
 [class CoronaPlayGround]->statistics: 
-[class CoronaPlayGround]->maxGeneration: 2834
-[class CoronaPlayGround]->minGeneration: 972
-[class CoronaPlayGround]->maxInfected:   500
-[class CoronaPlayGround]->minInfected:   452
+[class CoronaPlayGround]->maxGeneration: 4428
+[class CoronaPlayGround]->minGeneration: 1710
+[class CoronaPlayGround]->maxInfected:   423
+[class CoronaPlayGround]->minInfected:   130
 [class MImage]->min b: 0
-[class MImage]->av  b: 254.31907851977874
+[class MImage]->av  b: 254.49998571951994
 [class MImage]->max b: 255
 [class MImage]->min a: 0
-[class MImage]->av  a: 254.31907851977874
+[class MImage]->av  a: 254.49998571951994
 [class MImage]->max a: 255
