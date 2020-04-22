@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class CoronaWorld extends JPanel implements IRunner {
 
+
     private ArrayList<Individual> individuals = new ArrayList();
 
     public ArrayList<Distribution> getDistributions() {
@@ -22,17 +23,15 @@ public class CoronaWorld extends JPanel implements IRunner {
     private long running = 0;
     private Thread thread;
     private int generation = 0;
-    private long delay = 0;
     private boolean active = false;
-    private double worldSize = 160;
-    private double delta = worldSize * 0.3;
-    private double delta_2 = delta / 2.0;
-    private double infectionPropability = 1.0;
+    private final double worldSize;
+    private final double infectionPropability;
     private int maxInfected = 0;
 
     /// constructor
-    public CoronaWorld(CoronaPlayGround cpg, double p) {
+    public CoronaWorld(CoronaPlayGround cpg, double ws, double p) {
 
+        worldSize = ws;
         infectionPropability = p;
         coronaPlayGround = cpg;
         setFocusable(true);
@@ -337,14 +336,11 @@ public class CoronaWorld extends JPanel implements IRunner {
         generation++;
         for (Individual ind : individuals) {
 
-//            double dx = Math.random() * delta - delta_2;
-//            double dy = Math.random() * delta - delta_2;
+            double dx = Math.random() * CoronaPlayGround.delta - CoronaPlayGround.delta_2;
+            double dy = Math.random() * CoronaPlayGround.delta - CoronaPlayGround.delta_2;
 
-            double dx = CoronaPlayGround.getNextRandom() * delta - delta_2;
-            double dy = CoronaPlayGround.getNextRandom() * delta - delta_2;
-
-            ind.box.x += dx;
-            ind.box.y += dy;
+            ind.box.x += dx;//CoronaPlayGround.getNextRandom();
+            ind.box.y += dy;//CoronaPlayGround.getNextRandom();
 
             if (ind.box.x > worldSize) {
                 ind.box.x = 0;
@@ -367,6 +363,8 @@ public class CoronaWorld extends JPanel implements IRunner {
             Individual ind1 = individuals.get(i);
             for (int j = i + 1; j < individuals.size(); j++) {
                 Individual ind2 = individuals.get(j);
+                if (ind2.isImmune()) continue;
+                if (!ind1.isInfected()) continue;
                 infect(ind1, ind2);
             }
         }
@@ -380,12 +378,6 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     private void infect(Individual ind1, Individual ind2) {
 
-        if (ind2.isImmune()) {
-            return;
-        }
-        if (!ind1.isInfected()) {
-            return;
-        }
         if (!ind1.box.contains(ind2.box.x, ind2.box.y)) {
             return;
         }
@@ -393,10 +385,6 @@ public class CoronaWorld extends JPanel implements IRunner {
             return;
         }
         ind2.incInfectedTime();
-    }
-
-    public void setWorldSize(double ws) {
-        worldSize = ws;
     }
 
     public int getMaxInfected() {

@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CoronaPlayGround extends JPanel {
+public class CoronaPlayGround extends JPanel  {
 
     private static int numberCoronaWorlds = 1;
     private final Grapher grapher;
@@ -16,13 +16,17 @@ public class CoronaPlayGround extends JPanel {
     private int doneCounter = 0;
     private long startTime;
 
+    final static double worldSize = 160;
+    final static double delta = worldSize * 0.3;
+    final static double delta_2 = delta / 2.0;
+
     private final static int randomLimit = 100000;
     private final static double[] randomList = new double[randomLimit];
     private static int randomCounter = 0;
 
     private void initRandom() {
         for (int i = 0; i < randomList.length; i++) {
-            randomList[i] = Math.random();
+            randomList[i] = Math.random() * delta - delta_2;
         }
     }
 
@@ -56,7 +60,7 @@ public class CoronaPlayGround extends JPanel {
 //        });
 
         for (int i = 0; i < numberCoronaWorlds; i++) {
-            coronaWorlds.add(new CoronaWorld(this, infectionProbability));
+            coronaWorlds.add(new CoronaWorld(this, worldSize, infectionProbability));
         }
         setLayout(new GridLayout(1, 2));
         JPanel simu = new JPanel();
@@ -174,7 +178,7 @@ public class CoronaPlayGround extends JPanel {
                 numberCoronaWorlds,
                 timeString);
         grapher.saveImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu.png");
-        grapher.createHistogramImage(infectionProbability + "_corona_simu_histogram.png");
+        grapher.createHistogramImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu_histogram.png");
         repaint();
     }
 
@@ -182,7 +186,7 @@ public class CoronaPlayGround extends JPanel {
     public static void main(String[] args) {
 
         numberCoronaWorlds = 4000;
-        infectionProbability = 0.06;
+        infectionProbability = 0.04;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
