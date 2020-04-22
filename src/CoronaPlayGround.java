@@ -155,8 +155,8 @@ public class CoronaPlayGround extends JPanel {
     /// main for testing
     public static void main(String[] args) {
 
-        numberCoronaWorlds = 2000;
-        infectionProbability = 0.09;
+        numberCoronaWorlds = 4000;
+        infectionProbability = 0.08;
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
