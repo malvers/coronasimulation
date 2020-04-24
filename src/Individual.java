@@ -2,8 +2,6 @@ import java.awt.geom.Rectangle2D;
 
 public class Individual {
 
-    private final double range = 5;
-
     public int getInfectedTime() {
         return infectedTime;
     }
@@ -23,8 +21,8 @@ public class Individual {
     }
 
     public Individual() {
-        box.width = range;
-        box.height = range;
+        box.width = CoronaPlayGround.mysize;
+        box.height = CoronaPlayGround.mysize;
     }
 
     public boolean isImmune() {

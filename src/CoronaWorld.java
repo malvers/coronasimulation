@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CoronaWorld extends JPanel implements IRunner {
 
@@ -18,7 +19,6 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     private ArrayList<Distribution> distributions = new ArrayList<>();
 
-    private final int numIndividuals = 500;
     private final CoronaPlayGround coronaPlayGround;
     private long running = 0;
     private Thread thread;
@@ -27,10 +27,12 @@ public class CoronaWorld extends JPanel implements IRunner {
     private final double worldSize;
     private final double infectionPropability;
     private int maxInfected = 0;
+    private Random generator;
 
     /// constructor
     public CoronaWorld(CoronaPlayGround cpg, double ws, double p) {
 
+        generator = new Random(System.currentTimeMillis());
         worldSize = ws;
         infectionPropability = p;
         coronaPlayGround = cpg;
@@ -233,7 +235,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private long allImmune() {
-        if (getNumberImmune() + getNumberSusceptible() == numIndividuals) {
+        if (getNumberImmune() + getNumberSusceptible() == CoronaPlayGround.numIndividuals) {
             return 0;
         }
         return Long.MAX_VALUE;
@@ -279,7 +281,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberSusceptiblePercent() {
-        return getNumberSusceptible() / (double) numIndividuals;
+        return getNumberSusceptible() / (double) CoronaPlayGround.numIndividuals;
     }
 
     private int getNumberImmune() {
@@ -292,7 +294,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberImmunePercent() {
-        return getNumberImmune() / (double) numIndividuals;
+        return getNumberImmune() / (double) CoronaPlayGround.numIndividuals;
     }
 
     private int getNumberInfected() {
@@ -305,7 +307,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberInfectedPercent() {
-        return getNumberInfected() / (double) numIndividuals;
+        return getNumberInfected() / (double) CoronaPlayGround.numIndividuals;
     }
 
     void initIndividuals() {
@@ -320,7 +322,7 @@ public class CoronaWorld extends JPanel implements IRunner {
         ind.incInfectedTime();
         individuals.add(ind);
 
-        for (int i = 0; i < numIndividuals - 1; i++) {
+        for (int i = 0; i < CoronaPlayGround.numIndividuals - 1; i++) {
 
             ind = new Individual();
             ind.box.x = Math.random() * worldSize;
@@ -334,13 +336,14 @@ public class CoronaWorld extends JPanel implements IRunner {
     private void move() {
 
         generation++;
+        double f = CoronaPlayGround.move - CoronaPlayGround.moveHalf;
         for (Individual ind : individuals) {
 
-            double dx = Math.random() * CoronaPlayGround.delta - CoronaPlayGround.delta_2;
-            double dy = Math.random() * CoronaPlayGround.delta - CoronaPlayGround.delta_2;
+//            ind.box.x += Math.random() * f;
+//            ind.box.y += Math.random() * f;
 
-            ind.box.x += dx;//CoronaPlayGround.getNextRandom();
-            ind.box.y += dy;//CoronaPlayGround.getNextRandom();
+            ind.box.x += generator.nextDouble() * f;
+            ind.box.y += generator.nextDouble() * f;
 
             if (ind.box.x > worldSize) {
                 ind.box.x = 0;

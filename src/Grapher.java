@@ -1,5 +1,8 @@
+import mratools.MTools;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -17,8 +20,7 @@ public class Grapher extends JPanel {
     private int maxInfected;
     private double infectionProbability;
     private double numberCoronaWorlds;
-    private String timeString
-            ;
+    private String timeString;
 
     public void add(ArrayList<Distribution> d) {
 
@@ -52,34 +54,138 @@ public class Grapher extends JPanel {
         allDistributions.add(average);
     }
 
-    void createHistogramImage(String name) {
+    void saveHistogramImage(String name) {
 
-        MImage niceImage = new MImage((int) maxGeneration, (int) maxGeneration);
-        niceImage.initGray(255);
+        int collectSize = 3500;//(int) maxGeneration;
+        MImage collectImage = new MImage(collectSize, collectSize);
+        collectImage.initGray(255);
 
-        int width = niceImage.getWidth();
-        int height = niceImage.getHeight();
+        double width = collectImage.getWidth();
+        double height = collectImage.getHeight();
 
-        int count = 0;
+        int xHisto;
+        int yHisto;
+        int window = 10;
+        int histoSize = collectSize / window;
+        int[][] average = new int[histoSize][histoSize];
+        double max = 0.0;
 
+        /// loop all curves
         for (int j = 0; j < allDistributions.size() - 1; j++) {
 
-            ArrayList curve = allDistributions.get(j);
-            count++;
+            /// loop all distributions per curve
+            var curve = allDistributions.get(j);
 
             for (int i = 0; i < curve.size(); i++) {
 
                 Distribution e = (Distribution) curve.get(i);
 
-                int x = (int) ((width * i) / maxGeneration);
-                int y = (int) (e.infected * (double) height);
+                double x = (width * i) / maxGeneration;
+                double y = height - e.infected * height;
 
-//                niceImage.set((int) x, (int) height - y, 255);
-                niceImage.inc((int) x, (int) height - y, -1);
+                xHisto = (int) (0.1 * (double) x);
+                yHisto = (int) (0.1 * (double) y);
+                average[xHisto][yHisto]++;
+
+                if (average[xHisto][yHisto] > max) {
+                    max = average[xHisto][yHisto];
+                }
+
+                collectImage.addToPixel((int) x, (int) y, -1);
             }
         }
-        niceImage.scaleToFullRange();
-        niceImage.write(name);
+
+        writeData(width, height);
+
+        MTools.println("max: " + max);
+        collectImage.scaleToFullRange();
+        collectImage.write(name);
+
+        MImage histogramImage = new MImage(histoSize, histoSize);
+        for (xHisto = 0; xHisto < histoSize; xHisto++) {
+            for (yHisto = 0; yHisto < histoSize; yHisto++) {
+                double v = 255 - (255 * ((average[xHisto][yHisto]) / max));
+                histogramImage.setPixel(xHisto, yHisto, (int) v);
+            }
+        }
+        histogramImage.write("sampled_" + name);
+    }
+
+    private void writeData(double width, double height) {
+
+        for (int j = 0; j < allDistributions.size() - 1; j++) {
+
+            /// loop all distributions per curve
+            var curve = allDistributions.get(j);
+
+            for (int i = 0; i < curve.size(); i++) {
+
+                Distribution e = (Distribution) curve.get(i);
+
+                double x = (width * i) / maxGeneration;
+                double y = height - e.infected * height;
+            }
+        }
+    }
+
+    private static MImage scaleImage(int collectSize, BufferedImage collectImage) {
+
+        int window = 10;
+        int histoSize = collectSize / window;
+        MImage histogramImage = new MImage(histoSize, histoSize);
+        histogramImage.initGray(255);
+        int xHisto = 0;
+        int yHisto = 0;
+        int average[][] = new int[histoSize][histoSize];
+        double max = 0;
+        try {
+            double m = (double) histoSize / (double) collectSize; // = 0.1
+
+            for (int xCollect = 0; xCollect < collectSize; xCollect++) {
+                for (int yCollect = 0; yCollect < collectSize; yCollect++) {
+
+                    Color c = new Color(collectImage.getRGB(xCollect, yCollect));
+
+                    xHisto = (int) (m * (double) xCollect);
+                    yHisto = (int) (m * (double) yCollect);
+                    int red = c.getRed();
+                    average[xHisto][yHisto] += red;
+
+                    if (average[xHisto][yHisto] > max) {
+                        max = average[xHisto][yHisto];
+                    }
+                }
+            }
+            MTools.println("max: " + max);
+
+            for (xHisto = 0; xHisto < histoSize; xHisto++) {
+                for (yHisto = 0; yHisto < histoSize; yHisto++) {
+                    double v = 255 * ((average[xHisto][yHisto]) / max);
+//                    MTools.println("x: " + xHisto + " y: " + yHisto + " v: " + (int) v);
+                    histogramImage.setPixel(xHisto, yHisto, (int) v);
+                }
+            }
+
+        } catch (
+                Exception e) {
+            e.printStackTrace();
+        }
+        return histogramImage;
+    }
+
+    private static MImage colorImage(BufferedImage img) {
+
+        MImage coloredImage = new MImage(img.getWidth(), img.getHeight());
+        for (int xHisto = 0; xHisto < img.getWidth(); xHisto++) {
+            for (int yHisto = 0; yHisto < img.getHeight(); yHisto++) {
+                int colorInt = img.getRGB(xHisto, yHisto);
+                Color original = new Color(colorInt);
+                int r = original.getRed();
+                Color newColor = ColorChooser.myGetColor(r, 255);
+                coloredImage.setPixel(xHisto, yHisto, newColor);
+            }
+        }
+        return coloredImage;
     }
 
     @Override
@@ -128,6 +234,14 @@ public class Grapher extends JPanel {
         text = "runtime: " + timeString;
         g2d.drawString(text, xpos, ypos);
 
+        ypos += 2 * inc;
+        text = "individual size: " + CoronaPlayGround.mysize;
+        g2d.drawString(text, xpos, ypos);
+
+        ypos += 2 * inc;
+        text = "scale: " + CoronaPlayGround.scale;
+        g2d.drawString(text, xpos, ypos);
+
         for (int j = 0; j < allDistributions.size(); j++) {
 
             ArrayList curve = allDistributions.get(j);
@@ -160,7 +274,7 @@ public class Grapher extends JPanel {
         timeString = ts;
     }
 
-    public void saveImage(String name) {
+    public void savePaneImage(String name) {
 
         int h = 1000;
         int w = (int) (h * Math.sqrt(2.0));
@@ -171,6 +285,20 @@ public class Grapher extends JPanel {
             ImageIO.write(image, "png", new File(name));
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+
+        try {
+
+            String name = "test2.png";
+            BufferedImage img = ImageIO.read(new File(name));
+            MImage scale = colorImage(img);
+            scale.write("out_" + name );
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

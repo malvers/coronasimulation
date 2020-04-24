@@ -7,26 +7,29 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CoronaPlayGround extends JPanel  {
+public class CoronaPlayGround extends JPanel {
 
     private static int numberCoronaWorlds = 1;
+    static double scale;
     private final Grapher grapher;
     private static double infectionProbability = 0.1;
     private ArrayList<CoronaWorld> coronaWorlds = new ArrayList<>();
     private int doneCounter = 0;
     private long startTime;
 
-    final static double worldSize = 160;
-    final static double delta = worldSize * 0.3;
-    final static double delta_2 = delta / 2.0;
+    static double worldSize = 160;
+    static double move = worldSize * 0.3;
+    final static double moveHalf = move / 2.0;
 
+    static double mysize = 4;
+    static int numIndividuals = 500;
     private final static int randomLimit = 100000;
     private final static double[] randomList = new double[randomLimit];
     private static int randomCounter = 0;
 
     private void initRandom() {
         for (int i = 0; i < randomList.length; i++) {
-            randomList[i] = Math.random() * delta - delta_2;
+            randomList[i] = Math.random() * move - moveHalf;
         }
     }
 
@@ -177,16 +180,24 @@ public class CoronaPlayGround extends JPanel  {
                 infectionProbability,
                 numberCoronaWorlds,
                 timeString);
-        grapher.saveImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu.png");
-        grapher.createHistogramImage(numberCoronaWorlds + "_" + infectionProbability + "_corona_simu_histogram.png");
+        grapher.savePaneImage(mysize + " " + numberCoronaWorlds + "_" + infectionProbability + "_corona_simu.png");
+        grapher.saveHistogramImage(mysize + " " + numberCoronaWorlds + "_" + infectionProbability + "_corona_simu_histogram.png");
         repaint();
     }
 
     /// main for testing
     public static void main(String[] args) {
 
-        numberCoronaWorlds = 10000;
-        infectionProbability = 0.05;
+        scale = 2.0;
+
+        worldSize = 160 * scale;
+        numIndividuals = 500;
+        numIndividuals = (int) (numIndividuals * scale * scale);
+        mysize = 5 * scale;
+
+        infectionProbability = 0.03;
+        numberCoronaWorlds = 4000;
+
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         MFrame f = new MFrame();
@@ -196,8 +207,8 @@ public class CoronaPlayGround extends JPanel  {
         f.setBounds(0, 0, sz.width, sz.height);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        /// wait 10 seconds to start
-        MUtilityTools.pauseMillis(10000);
+        /// wait x seconds to start
+        MUtilityTools.pauseMillis(2000);
         cpg.startStopAll();
     }
 }

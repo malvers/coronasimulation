@@ -27,7 +27,7 @@ public class MImage extends BufferedImage {
     private void addNoise(int v) {
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                inc(x, y, (int)(Math.random() * v - (v/2.0)));
+                addToPixel(x, y, (int)(Math.random() * v - (v/2.0)));
             }
         }
     }
@@ -35,7 +35,7 @@ public class MImage extends BufferedImage {
     private void testInc() {
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                inc(x, y, (int) (Math.random() * 10));
+                addToPixel(x, y, (int) (Math.random() * 10));
             }
         }
     }
@@ -167,7 +167,7 @@ public class MImage extends BufferedImage {
         MTools.println("[" + getClass() + "]->max a: " + maxGray);
     }
 
-    void inc(int x, int y, int inc) {
+    void addToPixel(int x, int y, int inc) {
 
         ColorModel model = getColorModel();
         WritableRaster raster = getRaster();
@@ -204,12 +204,21 @@ public class MImage extends BufferedImage {
         raster.setDataElements(x, y, dataNeu);
     }
 
-    void set(int x, int y, int val) {
+    void setPixel(int x, int y, int val) {
 
         ColorModel model = getColorModel();
         WritableRaster raster = getRaster();
-        Color cNeu = new Color(val, 0, 0);
+        Color cNeu = new Color(val, val, val);
         int argbNeu = cNeu.getRGB();
+        Object dataNeu = model.getDataElements(argbNeu, null);
+        raster.setDataElements(x, y, dataNeu);
+    }
+
+    void setPixel(int x, int y, Color c) {
+
+        ColorModel model = getColorModel();
+        WritableRaster raster = getRaster();
+        int argbNeu = c.getRGB();
         Object dataNeu = model.getDataElements(argbNeu, null);
         raster.setDataElements(x, y, dataNeu);
     }
