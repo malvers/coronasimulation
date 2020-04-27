@@ -128,9 +128,9 @@ public class CoronaWorld extends JPanel implements IRunner {
 
         Graphics2D g2d = (Graphics2D) g;
 
-//        drawIndividuals(g2d);
+        drawIndividuals(g2d);
         drawLegende(g2d);
-//        drawCurves(g2d);
+        drawCurves(g2d);
     }
 
     private void drawIndividuals(Graphics2D g2d) {
@@ -146,7 +146,8 @@ public class CoronaWorld extends JPanel implements IRunner {
             } else {
                 g2d.setColor(Color.PINK);
             }
-            g2d.fill(is);
+//            g2d.fill(is);
+            g2d.draw(is);
         }
     }
 
@@ -366,8 +367,12 @@ public class CoronaWorld extends JPanel implements IRunner {
             Individual ind1 = individuals.get(i);
             for (int j = i + 1; j < individuals.size(); j++) {
                 Individual ind2 = individuals.get(j);
-                if (ind2.isImmune()) continue;
-                if (!ind1.isInfected()) continue;
+                if (ind2.isImmune()) {
+                    continue;
+                }
+                if (!ind1.isInfected()) {
+                    continue;
+                }
                 infect(ind1, ind2);
             }
         }
@@ -379,14 +384,35 @@ public class CoronaWorld extends JPanel implements IRunner {
         distributions.add(d);
     }
 
+//    private static final double maxDist = Math.sqrt(2.0) * (CoronaPlayGround.mysize / 2.0) ;
+
+    /// quadratur des Kreises
+    private static final double maxDist = Math.sqrt(1.0 / Math.PI) * CoronaPlayGround.mysize ;
+
     private void infect(Individual ind1, Individual ind2) {
 
-        if (!ind1.box.contains(ind2.box.x, ind2.box.y)) {
-            return;
+        boolean distance = false;
+
+        if (distance) {
+
+            double dx = ind1.box.x - ind2.box.x;
+            double dy = ind1.box.y - ind2.box.y;
+            double dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > maxDist) {
+                return;
+            }
+        } else {
+
+            if (!ind1.box.contains(ind2.box.x, ind2.box.y)) {
+                return;
+            }
         }
+
         if (!(Math.random() < infectionPropability)) {
             return;
         }
+
         ind2.incInfectedTime();
     }
 

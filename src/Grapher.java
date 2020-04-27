@@ -2,7 +2,6 @@ import mratools.MTools;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -181,7 +180,7 @@ public class Grapher extends JPanel {
                 int colorInt = img.getRGB(xHisto, yHisto);
                 Color original = new Color(colorInt);
                 int r = original.getRed();
-                Color newColor = ColorChooser.myGetColor(r, 255);
+                Color newColor = ColorGradient.myGetColor(r, 255);
                 coloredImage.setPixel(xHisto, yHisto, newColor);
             }
         }
@@ -242,6 +241,10 @@ public class Grapher extends JPanel {
         text = "scale: " + CoronaPlayGround.scale;
         g2d.drawString(text, xpos, ypos);
 
+        ypos += 2 * inc;
+        text = CoronaPlayGround.quarantineProbability*100 + "% infected quarantined after " + CoronaPlayGround.quarantineTime + " steps (half time)";
+        g2d.drawString(text, xpos, ypos);
+
         for (int j = 0; j < allDistributions.size(); j++) {
 
             ArrayList curve = allDistributions.get(j);
@@ -292,10 +295,11 @@ public class Grapher extends JPanel {
 
         try {
 
-            String name = "test2.png";
+            String name = "test3.png";
             BufferedImage img = ImageIO.read(new File(name));
-            MImage scale = colorImage(img);
-            scale.write("out_" + name );
+//            MImage scale = colorImage(img);
+//            MImage scale = niceColorImage(img);
+//            scale.write("out_" + name);
 
         } catch (IOException e) {
             e.printStackTrace();

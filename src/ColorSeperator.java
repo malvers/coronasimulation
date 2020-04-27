@@ -1,10 +1,12 @@
 import java.awt.*;
+import java.io.Serializable;
 
-class ColorSeperator {
+class ColorSeperator implements Serializable  {
 
     private Color leftColor = Color.WHITE;
     private Color rightColor = Color.WHITE;
     private double value = 0.5;
+    private boolean hilite = false;
 
     public ColorSeperator(double v) {
         value = v;
@@ -38,5 +40,13 @@ class ColorSeperator {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public boolean isHilite() {
+        return hilite;
+    }
+
+    public void setHilite(boolean hilite) {
+        this.hilite = hilite;
     }
 }

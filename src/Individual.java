@@ -7,9 +7,17 @@ public class Individual {
     }
 
     public void incInfectedTime() {
+
         infectedTime++;
         if (infectedTime > 600) {
             infectedTime = -1;
+        }
+
+        /// quarantine
+        if (infectedTime > CoronaPlayGround.quarantineTime) {
+            if (Math.random() < CoronaPlayGround.quarantineProbability) {
+                infectedTime = -1;
+            }
         }
     }
 
