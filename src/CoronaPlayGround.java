@@ -1,7 +1,3 @@
-import mratools.MFrame.MFrame;
-import mratools.MTools;
-import mratools.MUtilityTools;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -205,7 +201,11 @@ public class CoronaPlayGround extends JPanel {
 
         /// wait x seconds to start
         f.setTitle("still waiting ... ");
-        MUtilityTools.pauseMillis(5000);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         f.setTitle("now running ... ");
         cpg.startStopAll();
     }
