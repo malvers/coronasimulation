@@ -188,7 +188,7 @@ public class ColorGradient extends JPanel {
         ObjectInputStream in = new ObjectInputStream(f);
         int ns = in.readInt();
 
-        MTools.println("[" + getClass() + "]->ns: " + ns);
+        System.out.println("[" + getClass() + "]->ns: " + ns);
         seperators.clear();
         for (int i = 0; i < ns; i++) {
             seperators.add((ColorSeperator) in.readObject());
@@ -268,11 +268,11 @@ public class ColorGradient extends JPanel {
             ColorSeperator lsTo = seperators.get(i + 1);
 
             double to = (float) (range * (lsTo.getValue() - lsFrom.getValue()));
-            MTools.println("\n" + " vf: " + lsFrom.getValue() + " vt: " + lsTo.getValue() + " to: " + to + "\n");
+            System.out.println("\n" + " vf: " + lsFrom.getValue() + " vt: " + lsTo.getValue() + " to: " + to + "\n");
 
             for (int j = 0; j < to; j++) {
                 float percent = (float) (j * (1.0f / to));
-                MTools.println(x + " percent: " + percent);
+                System.out.println(x + " percent: " + percent);
                 g2d.setColor(blendColors(lsFrom.getLeftColor(), lsTo.getRightColor(), 1 - percent));
                 g2d.fill(new Rectangle2D.Double(x, 0, paintWidth, h));
                 x += paintWidth;
@@ -325,17 +325,17 @@ public class ColorGradient extends JPanel {
         f.setVisible(true);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        MTools.println("left test:  " + cc.getNiceColor(0.0));
-        MTools.println("left test:  " + cc.getNiceColor(0.4));
-        MTools.println("left test:  " + cc.getNiceColor(0.8));
-        MTools.println("right test: " + cc.getNiceColor(1.0));
+        System.out.println("left test:  " + cc.getNiceColor(0.0));
+        System.out.println("left test:  " + cc.getNiceColor(0.4));
+        System.out.println("left test:  " + cc.getNiceColor(0.8));
+        System.out.println("right test: " + cc.getNiceColor(1.0));
     }
 
     public void printSeperators() {
 
-        MTools.println("printSeperators ...");
+        System.out.println("printSeperators ...");
         for (ColorSeperator sep : seperators) {
-            MTools.println("val: " + sep.getValue());
+            System.out.println("val: " + sep.getValue());
         }
     }
 }

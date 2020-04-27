@@ -106,12 +106,12 @@ public class MImage extends BufferedImage {
         double n1 = 255.0 - m * maxGray;
         double n2 = 0.0 - m * minGray;
 
-        MTools.println("[" + getClass() + "]->min b: " + minGray);
-        MTools.println("[" + getClass() + "]->av  b: " + average);
-        MTools.println("[" + getClass() + "]->max b: " + maxGray);
-//        MTools.println("[" + getClass() + "]->m:     " + m);
-//        MTools.println("[" + getClass() + "]->n1:    " + n1);
-//        MTools.println("[" + getClass() + "]->n2:    " + n2);
+        System.out.println("[" + getClass() + "]->min b: " + minGray);
+        System.out.println("[" + getClass() + "]->av  b: " + average);
+        System.out.println("[" + getClass() + "]->max b: " + maxGray);
+//        System.out.println("[" + getClass() + "]->m:     " + m);
+//        System.out.println("[" + getClass() + "]->n1:    " + n1);
+//        System.out.println("[" + getClass() + "]->n2:    " + n2);
 
         average = 0.0;
         count = 0;
@@ -162,9 +162,9 @@ public class MImage extends BufferedImage {
             }
         }
         average /= count;
-        MTools.println("[" + getClass() + "]->min a: " + minGray);
-        MTools.println("[" + getClass() + "]->av  a: " + average);
-        MTools.println("[" + getClass() + "]->max a: " + maxGray);
+        System.out.println("[" + getClass() + "]->min a: " + minGray);
+        System.out.println("[" + getClass() + "]->av  a: " + average);
+        System.out.println("[" + getClass() + "]->max a: " + maxGray);
     }
 
     void addToPixel(int x, int y, int inc) {

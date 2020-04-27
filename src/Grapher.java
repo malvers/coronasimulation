@@ -96,7 +96,7 @@ public class Grapher extends JPanel {
 
         writeData(width, height);
 
-        MTools.println("max: " + max);
+        System.out.println("max: " + max);
         collectImage.scaleToFullRange();
         collectImage.write(name);
 
@@ -155,12 +155,12 @@ public class Grapher extends JPanel {
                     }
                 }
             }
-            MTools.println("max: " + max);
+            System.out.println("max: " + max);
 
             for (xHisto = 0; xHisto < histoSize; xHisto++) {
                 for (yHisto = 0; yHisto < histoSize; yHisto++) {
                     double v = 255 * ((average[xHisto][yHisto]) / max);
-//                    MTools.println("x: " + xHisto + " y: " + yHisto + " v: " + (int) v);
+//                    System.out.println("x: " + xHisto + " y: " + yHisto + " v: " + (int) v);
                     histogramImage.setPixel(xHisto, yHisto, (int) v);
                 }
             }
@@ -294,12 +294,8 @@ public class Grapher extends JPanel {
     public static void main(String[] args) {
 
         try {
-
             String name = "test3.png";
             BufferedImage img = ImageIO.read(new File(name));
-//            MImage scale = colorImage(img);
-//            MImage scale = niceColorImage(img);
-//            scale.write("out_" + name);
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -41,7 +41,7 @@ public class CoronaPlayGround extends JPanel {
             randomCounter = 0;
         }
         if (randomCounter >= randomLimit) {
-            MTools.println("randomCounter: " + randomCounter + " rl: " + randomLimit);
+            System.out.println("randomCounter: " + randomCounter + " rl: " + randomLimit);
         }
         return randomList[randomCounter];
     }
@@ -50,19 +50,7 @@ public class CoronaPlayGround extends JPanel {
 
         initRandom();
 
-        MTools.println("[" + getClass() + "]->ip: " + infectionProbability);
-//        addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                super.componentResized(e);
-//                double worldSize = getHeight() / 5;
-//
-//                for (CoronaWorld cw : coronaWorlds) {
-//                    cw.setWorldSize(worldSize);
-//                }
-//                repaint();
-//            }
-//        });
+        System.out.println("[" + getClass() + "]->ip: " + infectionProbability);
 
         for (int i = 0; i < numberCoronaWorlds; i++) {
             coronaWorlds.add(new CoronaWorld(this, worldSize, infectionProbability));
@@ -76,8 +64,6 @@ public class CoronaPlayGround extends JPanel {
         grapher = new Grapher();
         grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numberCoronaWorlds, "00:00:00");
 
-//        MTabbedPane tabbedPane = new MTabbedPane(simu, grapher);
-//        add(tabbedPane);
         removeAll();
         JSplitPane split = new JSplitPane();
         split.setDividerLocation(1000);
@@ -146,7 +132,7 @@ public class CoronaPlayGround extends JPanel {
 
     public void statistics(String timeString) {
 
-        MTools.println("[" + getClass() + "]->statistics: ");
+        System.out.println("[" + getClass() + "]->statistics: ");
         int maxGeneration = 0;
         int minGeneration = Integer.MAX_VALUE;
         int maxInfected = 0;
@@ -169,10 +155,10 @@ public class CoronaPlayGround extends JPanel {
                 minInfected = cw.getMaxInfected();
             }
         }
-        MTools.println("[" + getClass() + "]->maxGeneration: " + maxGeneration);
-        MTools.println("[" + getClass() + "]->minGeneration: " + minGeneration);
-        MTools.println("[" + getClass() + "]->maxInfected:   " + maxInfected);
-        MTools.println("[" + getClass() + "]->minInfected:   " + minInfected);
+        System.out.println("[" + getClass() + "]->maxGeneration: " + maxGeneration);
+        System.out.println("[" + getClass() + "]->minGeneration: " + minGeneration);
+        System.out.println("[" + getClass() + "]->maxInfected:   " + maxInfected);
+        System.out.println("[" + getClass() + "]->minInfected:   " + minInfected);
         grapher.calcAverageInfectionCurve();
         grapher.setGlobalStatistics(
                 maxGeneration,
@@ -208,9 +194,9 @@ public class CoronaPlayGround extends JPanel {
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         double density = (worldSize*worldSize) / numIndividuals;
-        MTools.println( "density: " + density );
+        System.out.println( "density: " + density );
 
-        MFrame f = new MFrame();
+        JFrame f = new JFrame();
         f.add(cpg);
         f.setVisible(true);
         Dimension sz = Toolkit.getDefaultToolkit().getScreenSize();

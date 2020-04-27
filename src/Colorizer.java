@@ -50,8 +50,8 @@ public class Colorizer extends JPanel implements ColorGradientListener {
         double m = 1.0 / (max - min);
         double n1 = 0.0 - m * min;
         double n2 = 1.0 - m * max;
-//        MTools.println("min: " + min + " max: " + max);
-//        MTools.println("m: " + m + " n1: " + n1 + " n2: " + n2);
+//        System.out.println("min: " + min + " max: " + max);
+//        System.out.println("m: " + m + " n1: " + n1 + " n2: " + n2);
 
 //        colorGradient.printSeperators();
         MImage coloredImage = new MImage(img.getWidth(), img.getHeight());
@@ -78,7 +78,7 @@ public class Colorizer extends JPanel implements ColorGradientListener {
     public void mouseEvent(MouseEvent e) {
 
 //        if( e.isAltDown() ) {
-//            MTools.println( "mouseEvent ..." );
+//            System.out.println( "mouseEvent ..." );
 //            MImage img = niceColorImage(image);
         imagePanel.setImage(niceColorImage(image));
         repaint();

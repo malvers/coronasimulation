@@ -98,7 +98,7 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     @Override
     public void start(long l) {
-//        MTools.println( "[" + getClass() + "]->start " + l);
+//        System.out.println( "[" + getClass() + "]->start " + l);
         if (l <= 0) {
             return;
         }
@@ -111,7 +111,7 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     @Override
     public void stop() {
-//        MTools.println( "[" + getClass() + "]->stop ");
+//        System.out.println( "[" + getClass() + "]->stop ");
         if (thread != null) {
             running = 0;
             // wait for completion

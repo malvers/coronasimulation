@@ -1,8 +1,0 @@
-[class CoronaPlayGround]->ip: 0.03
-density: 51.2
-[class mratools.MFrame.MFrame]->setLayout(LayoutManager manager) not implemented
-[class CoronaPlayGround]->statistics: 
-[class CoronaPlayGround]->maxGeneration: 2106
-[class CoronaPlayGround]->minGeneration: 100
-[class CoronaPlayGround]->maxInfected:   61
-[class CoronaPlayGround]->minInfected:   1
