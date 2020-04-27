@@ -32,6 +32,7 @@ public class CoronaPlayGround extends JPanel {
     }
 
     static double getNextRandom() {
+
         randomCounter++;
         if (randomCounter >= randomLimit) {
             randomCounter = 0;
@@ -155,6 +156,7 @@ public class CoronaPlayGround extends JPanel {
         System.out.println("[" + getClass() + "]->minGeneration: " + minGeneration);
         System.out.println("[" + getClass() + "]->maxInfected:   " + maxInfected);
         System.out.println("[" + getClass() + "]->minInfected:   " + minInfected);
+
         grapher.calcAverageInfectionCurve();
         grapher.setGlobalStatistics(
                 maxGeneration,
@@ -182,7 +184,7 @@ public class CoronaPlayGround extends JPanel {
         numIndividuals = 500;
         numIndividuals = (int) (numIndividuals * scale * scale);
         mysize = 5 * scale;
-        quarantineProbability = 0.01; /// 1%
+        quarantineProbability = 0.01;
         quarantineTime = 100;
         infectionProbability = 0.03;
         numberCoronaWorlds = 4000;
@@ -190,7 +192,7 @@ public class CoronaPlayGround extends JPanel {
         CoronaPlayGround cpg = new CoronaPlayGround();
 
         double density = (worldSize*worldSize) / numIndividuals;
-        System.out.println( "density: " + density );
+        System.out.println( "population density: " + density );
 
         JFrame f = new JFrame();
         f.add(cpg);
@@ -199,8 +201,8 @@ public class CoronaPlayGround extends JPanel {
         f.setBounds(0, 0, sz.width, sz.height);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        /// wait x seconds to start
         f.setTitle("still waiting ... ");
+        /// wait 5 seconds to start
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

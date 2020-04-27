@@ -27,12 +27,12 @@ public class CoronaWorld extends JPanel implements IRunner {
     private final double worldSize;
     private final double infectionPropability;
     private int maxInfected = 0;
-    private Random generator;
+    private Random randomGenerator;
 
     /// constructor
     public CoronaWorld(CoronaPlayGround cpg, double ws, double p) {
 
-        generator = new Random(System.currentTimeMillis());
+        randomGenerator = new Random(System.currentTimeMillis());
         worldSize = ws;
         infectionPropability = p;
         coronaPlayGround = cpg;
@@ -337,14 +337,13 @@ public class CoronaWorld extends JPanel implements IRunner {
     private void move() {
 
         generation++;
-        double f = CoronaPlayGround.move - CoronaPlayGround.moveHalf;
         for (Individual ind : individuals) {
 
-//            ind.box.x += Math.random() * f;
-//            ind.box.y += Math.random() * f;
+//            ind.box.x += Math.random() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
+//            ind.box.y += Math.random() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
 
-            ind.box.x += generator.nextDouble() * f;
-            ind.box.y += generator.nextDouble() * f;
+            ind.box.x += randomGenerator.nextDouble() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
+            ind.box.y += randomGenerator.nextDouble() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
 
             if (ind.box.x > worldSize) {
                 ind.box.x = 0;
