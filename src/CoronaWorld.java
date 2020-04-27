@@ -383,8 +383,6 @@ public class CoronaWorld extends JPanel implements IRunner {
         distributions.add(d);
     }
 
-//    private static final double maxDist = Math.sqrt(2.0) * (CoronaPlayGround.mysize / 2.0) ;
-
     /// quadratur des Kreises
     private static final double maxDist = Math.sqrt(1.0 / Math.PI) * CoronaPlayGround.mysize ;
 

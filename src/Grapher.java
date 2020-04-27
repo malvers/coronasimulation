@@ -51,62 +51,62 @@ public class Grapher extends JPanel {
         allDistributions.add(average);
     }
 
-    void saveHistogramImage(String name) {
-
-        int collectSize = 3500;//(int) maxGeneration;
-        MImage collectImage = new MImage(collectSize, collectSize);
-        collectImage.initGray(255);
-
-        double width = collectImage.getWidth();
-        double height = collectImage.getHeight();
-
-        int xHisto;
-        int yHisto;
-        int window = 10;
-        int histoSize = collectSize / window;
-        int[][] average = new int[histoSize][histoSize];
-        double max = 0.0;
-
-        /// loop all curves
-        for (int j = 0; j < allDistributions.size() - 1; j++) {
-
-            /// loop all distributions per curve
-            var curve = allDistributions.get(j);
-
-            for (int i = 0; i < curve.size(); i++) {
-
-                Distribution e = (Distribution) curve.get(i);
-
-                double x = (width * i) / maxGeneration;
-                double y = height - e.infected * height;
-
-                xHisto = (int) (0.1 * (double) x);
-                yHisto = (int) (0.1 * (double) y);
-                average[xHisto][yHisto]++;
-
-                if (average[xHisto][yHisto] > max) {
-                    max = average[xHisto][yHisto];
-                }
-
-                collectImage.addToPixel((int) x, (int) y, -1);
-            }
-        }
-
-        writeData(width, height);
-
-        System.out.println("max: " + max);
-        collectImage.scaleToFullRange();
-        collectImage.write(name);
-
-        MImage histogramImage = new MImage(histoSize, histoSize);
-        for (xHisto = 0; xHisto < histoSize; xHisto++) {
-            for (yHisto = 0; yHisto < histoSize; yHisto++) {
-                double v = 255 - (255 * ((average[xHisto][yHisto]) / max));
-                histogramImage.setPixel(xHisto, yHisto, (int) v);
-            }
-        }
-        histogramImage.write("sampled_" + name);
-    }
+//    void saveHistogramImage(String name) {
+//
+//        int collectSize = 3500;//(int) maxGeneration;
+//        MImage collectImage = new MImage(collectSize, collectSize);
+//        collectImage.initGray(255);
+//
+//        double width = collectImage.getWidth();
+//        double height = collectImage.getHeight();
+//
+//        int xHisto;
+//        int yHisto;
+//        int window = 10;
+//        int histoSize = collectSize / window;
+//        int[][] average = new int[histoSize][histoSize];
+//        double max = 0.0;
+//
+//        /// loop all curves
+//        for (int j = 0; j < allDistributions.size() - 1; j++) {
+//
+//            /// loop all distributions per curve
+//            var curve = allDistributions.get(j);
+//
+//            for (int i = 0; i < curve.size(); i++) {
+//
+//                Distribution e = (Distribution) curve.get(i);
+//
+//                double x = (width * i) / maxGeneration;
+//                double y = height - e.infected * height;
+//
+//                xHisto = (int) (0.1 * (double) x);
+//                yHisto = (int) (0.1 * (double) y);
+//                average[xHisto][yHisto]++;
+//
+//                if (average[xHisto][yHisto] > max) {
+//                    max = average[xHisto][yHisto];
+//                }
+//
+//                collectImage.addToPixel((int) x, (int) y, -1);
+//            }
+//        }
+//
+//        writeData(width, height);
+//
+//        System.out.println("max: " + max);
+//        collectImage.scaleToFullRange();
+//        collectImage.write(name);
+//
+//        MImage histogramImage = new MImage(histoSize, histoSize);
+//        for (xHisto = 0; xHisto < histoSize; xHisto++) {
+//            for (yHisto = 0; yHisto < histoSize; yHisto++) {
+//                double v = 255 - (255 * ((average[xHisto][yHisto]) / max));
+//                histogramImage.setPixel(xHisto, yHisto, (int) v);
+//            }
+//        }
+//        histogramImage.write("sampled_" + name);
+//    }
 
     private void writeData(double width, double height) {
 
@@ -125,65 +125,65 @@ public class Grapher extends JPanel {
         }
     }
 
-    private static MImage scaleImage(int collectSize, BufferedImage collectImage) {
+//    private static MImage scaleImage(int collectSize, BufferedImage collectImage) {
+//
+//        int window = 10;
+//        int histoSize = collectSize / window;
+//        MImage histogramImage = new MImage(histoSize, histoSize);
+//        histogramImage.initGray(255);
+//        int xHisto = 0;
+//        int yHisto = 0;
+//        int average[][] = new int[histoSize][histoSize];
+//        double max = 0;
+//        try {
+//            double m = (double) histoSize / (double) collectSize; // = 0.1
+//
+//            for (int xCollect = 0; xCollect < collectSize; xCollect++) {
+//                for (int yCollect = 0; yCollect < collectSize; yCollect++) {
+//
+//                    Color c = new Color(collectImage.getRGB(xCollect, yCollect));
+//
+//                    xHisto = (int) (m * (double) xCollect);
+//                    yHisto = (int) (m * (double) yCollect);
+//                    int red = c.getRed();
+//                    average[xHisto][yHisto] += red;
+//
+//                    if (average[xHisto][yHisto] > max) {
+//                        max = average[xHisto][yHisto];
+//                    }
+//                }
+//            }
+//            System.out.println("max: " + max);
+//
+//            for (xHisto = 0; xHisto < histoSize; xHisto++) {
+//                for (yHisto = 0; yHisto < histoSize; yHisto++) {
+//                    double v = 255 * ((average[xHisto][yHisto]) / max);
+////                    System.out.println("x: " + xHisto + " y: " + yHisto + " v: " + (int) v);
+//                    histogramImage.setPixel(xHisto, yHisto, (int) v);
+//                }
+//            }
+//
+//        } catch (
+//                Exception e) {
+//            e.printStackTrace();
+//        }
+//        return histogramImage;
+//    }
 
-        int window = 10;
-        int histoSize = collectSize / window;
-        MImage histogramImage = new MImage(histoSize, histoSize);
-        histogramImage.initGray(255);
-        int xHisto = 0;
-        int yHisto = 0;
-        int average[][] = new int[histoSize][histoSize];
-        double max = 0;
-        try {
-            double m = (double) histoSize / (double) collectSize; // = 0.1
-
-            for (int xCollect = 0; xCollect < collectSize; xCollect++) {
-                for (int yCollect = 0; yCollect < collectSize; yCollect++) {
-
-                    Color c = new Color(collectImage.getRGB(xCollect, yCollect));
-
-                    xHisto = (int) (m * (double) xCollect);
-                    yHisto = (int) (m * (double) yCollect);
-                    int red = c.getRed();
-                    average[xHisto][yHisto] += red;
-
-                    if (average[xHisto][yHisto] > max) {
-                        max = average[xHisto][yHisto];
-                    }
-                }
-            }
-            System.out.println("max: " + max);
-
-            for (xHisto = 0; xHisto < histoSize; xHisto++) {
-                for (yHisto = 0; yHisto < histoSize; yHisto++) {
-                    double v = 255 * ((average[xHisto][yHisto]) / max);
-//                    System.out.println("x: " + xHisto + " y: " + yHisto + " v: " + (int) v);
-                    histogramImage.setPixel(xHisto, yHisto, (int) v);
-                }
-            }
-
-        } catch (
-                Exception e) {
-            e.printStackTrace();
-        }
-        return histogramImage;
-    }
-
-    private static MImage colorImage(BufferedImage img) {
-
-        MImage coloredImage = new MImage(img.getWidth(), img.getHeight());
-        for (int xHisto = 0; xHisto < img.getWidth(); xHisto++) {
-            for (int yHisto = 0; yHisto < img.getHeight(); yHisto++) {
-                int colorInt = img.getRGB(xHisto, yHisto);
-                Color original = new Color(colorInt);
-                int r = original.getRed();
-                Color newColor = ColorGradient.myGetColor(r, 255);
-                coloredImage.setPixel(xHisto, yHisto, newColor);
-            }
-        }
-        return coloredImage;
-    }
+//    private static MImage colorImage(BufferedImage img) {
+//
+//        MImage coloredImage = new MImage(img.getWidth(), img.getHeight());
+//        for (int xHisto = 0; xHisto < img.getWidth(); xHisto++) {
+//            for (int yHisto = 0; yHisto < img.getHeight(); yHisto++) {
+//                int colorInt = img.getRGB(xHisto, yHisto);
+//                Color original = new Color(colorInt);
+//                int r = original.getRed();
+//                Color newColor = ColorGradient.myGetColor(r, 255);
+//                coloredImage.setPixel(xHisto, yHisto, newColor);
+//            }
+//        }
+//        return coloredImage;
+//    }
 
     @Override
     public void paint(Graphics g) {
