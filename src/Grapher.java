@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Grapher extends JPanel {
@@ -43,10 +45,14 @@ public class Grapher extends JPanel {
 
                 Distribution actDis = (Distribution) curve.get(i);
                 average.get(i).infected += actDis.infected;
+                average.get(i).immune += actDis.immune;
+                average.get(i).susceptible += actDis.susceptible;
             }
         }
         for (int i = 0; i < average.size(); i++) {
             average.get(i).infected /= (double) allDistributions.size();
+            average.get(i).immune /= (double) allDistributions.size();
+            average.get(i).susceptible /= (double) allDistributions.size();
         }
         allDistributions.add(average);
     }
@@ -108,21 +114,82 @@ public class Grapher extends JPanel {
 //        histogramImage.write("sampled_" + name);
 //    }
 
-    private void writeData(double width, double height) {
+    void writeData() throws FileNotFoundException {
 
-        for (int j = 0; j < allDistributions.size() - 1; j++) {
-
-            /// loop all distributions per curve
+        int max = 0;
+        int numCurves = allDistributions.size();
+        for (int j = 0; j < numCurves; j++) {
             var curve = allDistributions.get(j);
-
-            for (int i = 0; i < curve.size(); i++) {
-
-                Distribution e = (Distribution) curve.get(i);
-
-                double x = (width * i) / maxGeneration;
-                double y = height - e.infected * height;
+            if (curve.size() > max) {
+                max = curve.size();
             }
         }
+//        System.out.println(numCurves + " max: " + max);
+
+        String fileName = ""
+                + "cw " + (PlayGround.numSimulations * SimulatorCore.numThreads)
+                + " in " + PlayGround.numIndividuals
+                + " rt " + PlayGround.recoverTime
+                + " ip " + PlayGround.infectionProbability + "[" + PlayGround.infectionProbability * 100 + "%]"
+                + " ws " + PlayGround.worldSize
+                + " is " + PlayGround.individualSize
+                + " qp " + PlayGround.quarantineProbability
+                + " qt " + PlayGround.quarantineTime
+                + " sf " + PlayGround.scale
+                + ".txt";
+
+        PrintWriter pw = new PrintWriter(fileName);
+
+        pw.write("// " + fileName + "\n");
+        pw.write("//  cw - number simulations:     " + PlayGround.numSimulations * SimulatorCore.numThreads + "\n");
+        pw.write("//  in - number individuals:     " + PlayGround.numIndividuals + "\n");
+        pw.write("//  rt - number individuals:     " + PlayGround.recoverTime + "\n");
+        pw.write("//  ip - infection probability:  " + PlayGround.infectionProbability + "\n");
+        pw.write("//  ws - world size:             " + PlayGround.worldSize + "\n");
+        pw.write("//  is - individual size:        " + PlayGround.individualSize + "\n");
+        pw.write("//  qp - quarantine probability: " + PlayGround.quarantineProbability + "\n");
+        pw.write("//  qt - quarantine time:        " + PlayGround.quarantineTime + "\n");
+        pw.write("//  sf - scale factor:           " + PlayGround.scale + "\n");
+        pw.write("//  following two lines: 1. cw + 1 for average 2. maximal number steps\n");
+        pw.write("//  format below: cw * infected, immune, susceptible\n");
+
+        pw.write(SimulatorCore.numThreads * PlayGround.numSimulations + 1 + "\n");
+        pw.write((max + 1) + "\n");
+
+        for (int step = 0; step < max; step++) {
+
+            double[] data = new double[numCurves * 3];
+            int di = 0;
+            for (int dis = 0; dis < numCurves; dis++) {
+
+                var curve = allDistributions.get(dis);
+
+                if (step < curve.size()) {
+                    Distribution e = (Distribution) curve.get(step);
+                    data[di] = e.infected;
+                    data[di + 1] = e.immune;
+                    data[di + 2] = e.susceptible;
+                } else {
+                    data[di] = -1;
+                    data[di + 1] = -1;
+                    data[di + 2] = -1;
+                }
+                di += 3;
+            }
+//            System.out.print(step + ", ");
+
+//            pw.write(step + "  ");
+
+            int to = data.length;
+            for (int ds = 0; ds < to; ds++) {
+//                System.out.print(data[ds] + ", ");
+                pw.write(data[ds] + " ");
+            }
+//            System.out.println();
+            pw.write("\n");
+
+        }
+        pw.close();
     }
 
 //    private static MImage scaleImage(int collectSize, BufferedImage collectImage) {
@@ -232,15 +299,15 @@ public class Grapher extends JPanel {
         g2d.drawString(text, xpos, ypos);
 
         ypos += 2 * inc;
-        text = "individual size: " + CoronaPlayGround.mysize;
+        text = "individual size: " + PlayGround.individualSize;
         g2d.drawString(text, xpos, ypos);
 
         ypos += 2 * inc;
-        text = "scale: " + CoronaPlayGround.scale;
+        text = "scale: " + PlayGround.scale;
         g2d.drawString(text, xpos, ypos);
 
         ypos += 2 * inc;
-        text = CoronaPlayGround.quarantineProbability*100 + "% infected quarantined after " + CoronaPlayGround.quarantineTime + " steps (half time)";
+        text = PlayGround.quarantineProbability * 100 + "% infected quarantined after " + PlayGround.quarantineTime + " steps (half time)";
         g2d.drawString(text, xpos, ypos);
 
         for (int j = 0; j < allDistributions.size(); j++) {

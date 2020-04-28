@@ -3,28 +3,56 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CoronaPlayGround extends JPanel {
+public class PlayGround extends JPanel {
 
-    public static double quarantineProbability = 0.01;
+    public static double quarantineProbability = 0.0;
     public static int quarantineTime = 300;
-    private static int numberCoronaWorlds = 1;
-    static double scale;
+    public static int recoverTime = 600;
+    static int numSimulations = 4000;
+    static double scale = 1.0;
     private final Grapher grapher;
-    private static double infectionProbability = 0.1;
+    static double infectionProbability = 0.01;
     private ArrayList<CoronaWorld> coronaWorlds = new ArrayList<>();
     private int doneCounter = 0;
-    private long startTime;
+    private static long startTime;
 
     static double worldSize = 160;
     static double move = worldSize * 0.3;
     final static double moveHalf = move / 2.0;
 
-    static double mysize = 4;
+    static double individualSize = 4;
     static int numIndividuals = 500;
     private final static int randomLimit = 100000;
     private final static double[] randomList = new double[randomLimit];
     private static int randomCounter = 0;
 
+    public PlayGround() {
+
+        initRandom();
+
+        System.out.println("[" + getClass() + "]->ip: " + infectionProbability);
+
+        for (int i = 0; i < numSimulations; i++) {
+            coronaWorlds.add(new CoronaWorld(this));
+        }
+        setLayout(new GridLayout(1, 2));
+        JPanel simu = new JPanel();
+        simu.setLayout(new GridLayout(4, 2, 0, 0));
+        for (CoronaWorld cw : coronaWorlds) {
+            simu.add(cw);
+        }
+        grapher = new Grapher();
+        grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numSimulations, "00:00:00");
+
+        removeAll();
+        JSplitPane split = new JSplitPane();
+        split.setDividerLocation(640);
+        split.setLeftComponent(simu);
+        split.setRightComponent(grapher);
+        add(split);
+    }
+
+    /// constructor
     private void initRandom() {
         for (int i = 0; i < randomList.length; i++) {
             randomList[i] = Math.random() * move - moveHalf;
@@ -41,32 +69,6 @@ public class CoronaPlayGround extends JPanel {
             System.out.println("randomCounter: " + randomCounter + " rl: " + randomLimit);
         }
         return randomList[randomCounter];
-    }
-
-    public CoronaPlayGround() {
-
-        initRandom();
-
-        System.out.println("[" + getClass() + "]->ip: " + infectionProbability);
-
-        for (int i = 0; i < numberCoronaWorlds; i++) {
-            coronaWorlds.add(new CoronaWorld(this, worldSize, infectionProbability));
-        }
-        setLayout(new GridLayout(1, 2));
-        JPanel simu = new JPanel();
-        simu.setLayout(new GridLayout(10, 2, 0, 0));
-        for (CoronaWorld cw : coronaWorlds) {
-            simu.add(cw);
-        }
-        grapher = new Grapher();
-        grapher.setGlobalStatistics(0, 0, 0, 0, infectionProbability, numberCoronaWorlds, "00:00:00");
-
-        removeAll();
-        JSplitPane split = new JSplitPane();
-        split.setDividerLocation(1000);
-        split.setLeftComponent(simu);
-        split.setRightComponent(grapher);
-        add(split);
     }
 
     void deactivateAll() {
@@ -91,15 +93,12 @@ public class CoronaPlayGround extends JPanel {
     public void done() {
 
         doneCounter++;
-        if (doneCounter >= numberCoronaWorlds) {
-            statistics(getTimeString());
+        if (doneCounter >= numSimulations) {
+            statistics("duration " + getTimeString(System.currentTimeMillis() - startTime));
         }
     }
 
-    private String getTimeString() {
-
-        long duration = System.currentTimeMillis() - startTime;
-//            long seconds = TimeUnit.MILLISECONDS.toSeconds(duration);
+    static String getTimeString(long duration) {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(duration);
@@ -110,6 +109,7 @@ public class CoronaPlayGround extends JPanel {
         int mHour = calendar.get(Calendar.HOUR) - 1;
         int mMin = calendar.get(Calendar.MINUTE);
         int mSec = calendar.get(Calendar.SECOND);
+        int mMil = calendar.get(Calendar.MILLISECOND);
 
         String sh = "" + mHour;
         if (mHour < 10) {
@@ -123,8 +123,15 @@ public class CoronaPlayGround extends JPanel {
         if (mSec < 10) {
             ss = "0" + ss;
         }
+        String ms = "" + mMil;
+        if (mMil < 100) {
+            ms = "0" + ms;
+        }
+        if (mMil < 10) {
+            ms = "0" + ms;
+        }
 
-        return "duration [hour:min:sec] - " + sh + ":" + sm + ":" + ss;
+        return "[hh:mm:ss:ms] " + sh + ":" + sm + ":" + ss + ":" + ms;
     }
 
     public void statistics(String timeString) {
@@ -164,12 +171,12 @@ public class CoronaPlayGround extends JPanel {
                 maxInfected,
                 minInfected,
                 infectionProbability,
-                numberCoronaWorlds,
+                numSimulations,
                 timeString);
-        grapher.savePaneImage(quarantineProbability*100 + "% "
+        grapher.savePaneImage(quarantineProbability * 100 + "% "
                 + " qt " + quarantineTime
-                + " ms " + mysize
-                + " cw " + numberCoronaWorlds
+                + " ms " + individualSize
+                + " cw " + numSimulations
                 + " ip " + infectionProbability + "_corona_simu.png");
 //        grapher.saveHistogramImage(CoronaPlayGround.quarantineProbability*100 + "% " + mysize + " " + numberCoronaWorlds + "_" + infectionProbability + "_corona_simu_histogram.png");
         repaint();
@@ -183,22 +190,22 @@ public class CoronaPlayGround extends JPanel {
         worldSize = 160 * scale;
         numIndividuals = 500;
         numIndividuals = (int) (numIndividuals * scale * scale);
-        mysize = 5 * scale;
-        quarantineProbability = 0.01;
-        quarantineTime = 100;
+        individualSize = 5 * scale;
+        quarantineProbability = 0.00;
+        quarantineTime = 300;
         infectionProbability = 0.03;
-        numberCoronaWorlds = 4000;
+        numSimulations = 8;
 
-        CoronaPlayGround cpg = new CoronaPlayGround();
+        PlayGround cpg = new PlayGround();
 
-        double density = (worldSize*worldSize) / numIndividuals;
-        System.out.println( "population density: " + density );
+        double density = (worldSize * worldSize) / numIndividuals;
+        System.out.println("population density: " + density);
 
         JFrame f = new JFrame();
         f.add(cpg);
         f.setVisible(true);
         Dimension sz = Toolkit.getDefaultToolkit().getScreenSize();
-        f.setBounds(0, 0, sz.width, sz.height);
+        f.setBounds(0, 0, sz.width, 640);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         f.setTitle("still waiting ... ");
@@ -209,6 +216,6 @@ public class CoronaPlayGround extends JPanel {
             e.printStackTrace();
         }
         f.setTitle("now running ... ");
-        cpg.startStopAll();
+//        cpg.startStopAll();
     }
 }

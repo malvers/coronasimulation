@@ -12,6 +12,7 @@ public class CoronaWorld extends JPanel implements IRunner {
 
 
     private ArrayList<Individual> individuals = new ArrayList();
+    static Color niceGreen = new Color(140,200,0);
 
     public ArrayList<Distribution> getDistributions() {
         return distributions;
@@ -19,22 +20,24 @@ public class CoronaWorld extends JPanel implements IRunner {
 
     private ArrayList<Distribution> distributions = new ArrayList<>();
 
-    private final CoronaPlayGround coronaPlayGround;
+    private PlayGround coronaPlayGround = null;
     private long running = 0;
     private Thread thread;
     private int generation = 0;
     private boolean active = false;
-    private final double worldSize;
-    private final double infectionPropability;
     private int maxInfected = 0;
     private Random randomGenerator;
 
     /// constructor
-    public CoronaWorld(CoronaPlayGround cpg, double ws, double p) {
+    public  CoronaWorld() {
+        randomGenerator = new Random(System.currentTimeMillis());
+        initIndividuals();
+    }
+
+    /// constructor
+    public CoronaWorld(PlayGround cpg) {
 
         randomGenerator = new Random(System.currentTimeMillis());
-        worldSize = ws;
-        infectionPropability = p;
         coronaPlayGround = cpg;
         setFocusable(true);
         setBackground(Color.BLACK);
@@ -142,18 +145,19 @@ public class CoronaWorld extends JPanel implements IRunner {
             if (ind.isInfected()) {
                 g2d.setColor(Color.RED);
             } else if (ind.isImmune()) {
-                g2d.setColor(Color.GREEN);
+                g2d.setColor(niceGreen);
             } else {
-                g2d.setColor(Color.PINK);
+                g2d.setColor(Color.WHITE);
             }
-//            g2d.fill(is);
-            g2d.draw(is);
+            g2d.fill(is);
+//            g2d.draw(is);
         }
     }
 
     private void drawCurves(Graphics2D g2d) {
 
-        g2d.setColor(Color.PINK);
+        double worldSize = PlayGround.worldSize;
+        g2d.setColor(Color.LIGHT_GRAY);
         g2d.fill(new Rectangle2D.Double(worldSize, 0, worldSize, worldSize));
 
         int numSteps = distributions.size();
@@ -170,12 +174,12 @@ public class CoronaWorld extends JPanel implements IRunner {
             double y = worldSize - infected;
             g2d.fill(new Rectangle2D.Double(x, y, wBar, infected));
 
-            g2d.setColor(Color.PINK);
+            g2d.setColor(Color.WHITE);
             double susceptible = worldSize * d.susceptible;
             y -= susceptible;
             g2d.fill(new Rectangle2D.Double(x, y, wBar, susceptible));
 
-            g2d.setColor(Color.GREEN);
+            g2d.setColor(niceGreen);
             double immune = worldSize * d.immune;
             y -= immune;
             g2d.fill(new Rectangle2D.Double(x, y, wBar, immune));
@@ -191,7 +195,7 @@ public class CoronaWorld extends JPanel implements IRunner {
         } else {
             g2d.setColor(Color.GRAY);
         }
-        g2d.fill(new Rectangle2D.Double(0, 0, 120, 140));
+        g2d.fill(new Rectangle2D.Double(0, 0, 50, 90));
         g2d.setColor(Color.GRAY);
         int yPos = 20;
         int yInc = 20;
@@ -204,7 +208,7 @@ public class CoronaWorld extends JPanel implements IRunner {
 //        yPos += yInc;
 //        g2d.setColor(Color.LIGHT_GRAY);
 //        g2d.drawString("delay " + delay, 10, yPos);
-        g2d.setColor(Color.PINK);
+        g2d.setColor(Color.WHITE);
         yPos += yInc;
         g2d.drawString("" + getNumberSusceptible(), 2, yPos);
         g2d.setColor(Color.RED);
@@ -212,7 +216,7 @@ public class CoronaWorld extends JPanel implements IRunner {
 //        g2d.drawString("" + getNumberInfected(), 2, yPos);
         yPos += yInc;
         g2d.drawString("" + maxInfected, 2, yPos);
-        g2d.setColor(Color.GREEN);
+        g2d.setColor(niceGreen);
         yPos += yInc;
         g2d.drawString("" + getNumberImmune(), 2, yPos);
 //        g2d.setColor(Color.ORANGE);
@@ -235,14 +239,15 @@ public class CoronaWorld extends JPanel implements IRunner {
 //        g2d.drawString("immune [%] " + (int) (100 * getNumberImmunePercent()), 10, yPos);
     }
 
-    private long allImmune() {
-        if (getNumberImmune() + getNumberSusceptible() == CoronaPlayGround.numIndividuals) {
+    long allImmune() {
+        if (getNumberImmune() + getNumberSusceptible() == PlayGround.numIndividuals) {
             return 0;
         }
         return Long.MAX_VALUE;
     }
 
     private void updateInfected() {
+
         for (Individual ind : individuals) {
             if (ind.isInfected()) {
                 ind.incInfectedTime();
@@ -266,12 +271,6 @@ public class CoronaWorld extends JPanel implements IRunner {
         repaint();
     }
 
-    private void oneInfectionStep() {
-        move();
-        infect();
-        updateInfected();
-    }
-
     private int getNumberSusceptible() {
         int count = 0;
         for (Individual ind : individuals)
@@ -282,7 +281,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberSusceptiblePercent() {
-        return getNumberSusceptible() / (double) CoronaPlayGround.numIndividuals;
+        return getNumberSusceptible() / (double) PlayGround.numIndividuals;
     }
 
     private int getNumberImmune() {
@@ -295,7 +294,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberImmunePercent() {
-        return getNumberImmune() / (double) CoronaPlayGround.numIndividuals;
+        return getNumberImmune() / (double) PlayGround.numIndividuals;
     }
 
     private int getNumberInfected() {
@@ -308,11 +307,29 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     private double getNumberInfectedPercent() {
-        return getNumberInfected() / (double) CoronaPlayGround.numIndividuals;
+        return getNumberInfected() / (double) PlayGround.numIndividuals;
+    }
+
+    public int getMaxInfected() {
+        return maxInfected;
+    }
+
+    public int getMaxGeneration() {
+        return generation;
+    }
+
+    /// ///////////////////////////////////////////////////////////////////////////////
+    /// following are the important methods
+
+    void oneInfectionStep() {
+        move();
+        infect();
+        updateInfected();
     }
 
     void initIndividuals() {
 
+        double worldSize = PlayGround.worldSize;
         maxInfected = 0;
         generation = 0;
         distributions.clear();
@@ -323,7 +340,7 @@ public class CoronaWorld extends JPanel implements IRunner {
         ind.incInfectedTime();
         individuals.add(ind);
 
-        for (int i = 0; i < CoronaPlayGround.numIndividuals - 1; i++) {
+        for (int i = 0; i < PlayGround.numIndividuals - 1; i++) {
 
             ind = new Individual();
             ind.box.x = Math.random() * worldSize;
@@ -337,13 +354,14 @@ public class CoronaWorld extends JPanel implements IRunner {
     private void move() {
 
         generation++;
+        double worldSize = PlayGround.worldSize;
         for (Individual ind : individuals) {
 
 //            ind.box.x += Math.random() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
 //            ind.box.y += Math.random() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
 
-            ind.box.x += randomGenerator.nextDouble() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
-            ind.box.y += randomGenerator.nextDouble() * CoronaPlayGround.move - CoronaPlayGround.moveHalf;
+            ind.box.x += randomGenerator.nextDouble() * PlayGround.move - PlayGround.moveHalf;
+            ind.box.y += randomGenerator.nextDouble() * PlayGround.move - PlayGround.moveHalf;
 
             if (ind.box.x > worldSize) {
                 ind.box.x = 0;
@@ -384,8 +402,7 @@ public class CoronaWorld extends JPanel implements IRunner {
     }
 
     /// quadratur des Kreises
-    private static final double maxDist = Math.sqrt(1.0 / Math.PI) * CoronaPlayGround.mysize ;
-
+    private static final double maxDist = Math.sqrt(1.0 / Math.PI) * PlayGround.individualSize;
     private void infect(Individual ind1, Individual ind2) {
 
         boolean distance = false;
@@ -406,18 +423,10 @@ public class CoronaWorld extends JPanel implements IRunner {
             }
         }
 
-        if (!(Math.random() < infectionPropability)) {
+        if (!(Math.random() < PlayGround.infectionProbability)) {
             return;
         }
 
         ind2.incInfectedTime();
-    }
-
-    public int getMaxInfected() {
-        return maxInfected;
-    }
-
-    public int getMaxGeneration() {
-        return generation;
     }
 }

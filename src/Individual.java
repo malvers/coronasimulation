@@ -9,13 +9,13 @@ public class Individual {
     public void incInfectedTime() {
 
         infectedTime++;
-        if (infectedTime > 600) {
+        if (infectedTime > PlayGround.recoverTime) {
             infectedTime = -1;
         }
 
         /// quarantine
-        if (infectedTime > CoronaPlayGround.quarantineTime) {
-            if (Math.random() < CoronaPlayGround.quarantineProbability) {
+        if (infectedTime > PlayGround.quarantineTime) {
+            if (Math.random() < PlayGround.quarantineProbability) {
                 infectedTime = -1;
             }
         }
@@ -29,8 +29,8 @@ public class Individual {
     }
 
     public Individual() {
-        box.width = CoronaPlayGround.mysize;
-        box.height = CoronaPlayGround.mysize;
+        box.width = PlayGround.individualSize;
+        box.height = PlayGround.individualSize;
     }
 
     public boolean isImmune() {
