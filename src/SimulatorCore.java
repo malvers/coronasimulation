@@ -17,6 +17,7 @@ public class SimulatorCore implements IRunner {
         name = nameIn;
         grapher = new Grapher();
 
+        /// times numThreads !!!
         PlayGround.numSimulations = 1000;
 
         start(Long.MAX_VALUE);
@@ -86,3 +87,6 @@ public class SimulatorCore implements IRunner {
         startSimulations();
     }
 }
+
+
+
