@@ -1,85 +1,63 @@
 import mratools.MTools;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Combinizer {
 
-    public Combinizer() {
+    private String possibilities[];
 
-        int cols = 3;
-        int rows = 3;
-        int max = Math.max(rows, cols);
-        int numCombis = max * max;
-        int data[] = new int[cols];
-        String sField[][] = new String[numCombis][max];
+    public Combinizer() throws FileNotFoundException {
 
-//        test();
+        int cols = 6;
+        int rows = 6;
+
+        possibilities = new String[cols];
+
+        String[] allCombis = MyCombinationsWithRepeats.get(rows, cols);
+
+        MTools.println("Create possibilities ...");
+        fillRows(cols);
+
+        for (String str : possibilities) {
+            MTools.println(str);
+        }
+        
+        MTools.println( "Print combinations ..." );
+        for ( String str : allCombis) {
+            MTools.println( str );
+        }
+
+        PrintWriter pw = new PrintWriter(rows + " x " + cols + ".dat");
+        pw.write("// rows: " + rows + " cols: " + cols + " number possibilities: " + allCombis.length + "\n");
+
+        MTools.println("");
+        MTools.println("Create variations ...");
+        int count = 0;
+        for (String string : allCombis) {
+
+            for (int i = 0; i < string.length(); i++) {
+
+                char c = string.charAt(i);
+                int v = Integer.parseInt(Character.toString(c));
+
+//                MTools.print(v + " ");
+//                MTools.println("" + possibilities[v]);
+                count++;
+                pw.write(possibilities[v] + "\n");
+            }
+//            MTools.println("");
+            pw.write("\n");
+        }
+        pw.close();
+        MTools.println( "count: " + allCombis.length);
+    }
+
+    private void fillRows(int cols) {
 
         String[] oneRow = new String[cols];
-        fillRow(cols, oneRow);
-
-        MTools.println("Permutations");
-
-        printPermutn(oneRow[0], "");
-
-//        MTools.println( "" );
-//        printPermutn(oneRow[1], "");
-//        MTools.println("");
-//        printPermutn(oneRow[2], "");
-
-//        int count = 0;
-//        List<List<String>> list = getAllCombinations(Arrays.asList(oneRow));
-//        for (List<String> arr : list) {
-//            for (String s : arr) {
-//                count++;
-//                System.out.println(s);
-//            }
-//            System.out.println();
-//        }
-//        MTools.println("count: " + count);
-    }
-
-    static void printPermutn(String str, String ans) {
-
-        // If string is empty
-        if (str.length() == 0) {
-            System.out.print(ans + " ");
-            return;
-        }
-
-        for (int i = 0; i < str.length(); i++) {
-
-            // ith character of str
-            char ch = str.charAt(i);
-
-            // Rest of the string after excluding
-            // the ith character
-            String ros = str.substring(0, i) + str.substring(i + 1);
-
-            // Recurvise call
-            printPermutn(ros, ans + ch);
-        }
-    }
-
-    static void per(String a, int start) {
-        //bse case;
-        if (a.length() == start) {
-            System.out.println(a);
-        }
-        char[] ca = a.toCharArray();
-        //swap
-        for (int i = start; i < ca.length; i++) {
-            char t = ca[i];
-            ca[i] = ca[start];
-            ca[start] = t;
-            per(new String(ca), start + 1);
-        }
-    }//per
-
-
-    private void fillRow(int cols, String[] oneRow) {
-
         for (int i = 0; i < cols; i++) {
             oneRow[i] = "";
             for (int j = 0; j < cols; j++) {
@@ -90,7 +68,7 @@ public class Combinizer {
                     oneRow[i] += "0";
                 }
             }
-            MTools.println(oneRow[i]);
+            possibilities[i] = oneRow[i];
         }
     }
 
@@ -109,22 +87,8 @@ public class Combinizer {
         return combinationList;
     }
 
-    //    private static int m[] = new int[100];
-//    static void move(int line) {
-//
-//        MTools.println("" + m[line]);
-//        m[line]++;
-//        if (m[line] == 100) {
-//            m[line] = 0;
-//            move(line + 1);
-//        }
-//    }
-    public static void main(String[] args) {
-
-//        new Combinizer();
-
-        String a = "123";
-        per(a, 0);
-
+    // main for testing
+    public static void main(String[] args) throws FileNotFoundException {
+        new Combinizer();
     }
 }
